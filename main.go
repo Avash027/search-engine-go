@@ -16,7 +16,7 @@ func queryHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", queryHandler)
+	http.HandleFunc("/search", queryHandler)
 
 	fmt.Println("Server is running on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
