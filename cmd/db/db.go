@@ -12,10 +12,10 @@ var (
 	fileDB       *sql.DB
 	reverseIndex *sql.DB
 	lemmatizedDB *sql.DB
+	stopListDB   *sql.DB
 	dbInitMutex  sync.Mutex // Mutex for synchronizing DB initialization
 )
 
-// GetFileDB function with thread safety
 func GetFileDB() (*sql.DB, error) {
 	dbInitMutex.Lock()
 	defer dbInitMutex.Unlock()
@@ -31,7 +31,6 @@ func GetFileDB() (*sql.DB, error) {
 	return fileDB, nil
 }
 
-// GetReverseIndexDB function with thread safety
 func GetReverseIndexDB() (*sql.DB, error) {
 	dbInitMutex.Lock()
 	defer dbInitMutex.Unlock()
@@ -47,7 +46,6 @@ func GetReverseIndexDB() (*sql.DB, error) {
 	return reverseIndex, nil
 }
 
-// GetLemmatizedDB function with thread safety
 func GetLemmatizedDB() (*sql.DB, error) {
 	dbInitMutex.Lock()
 	defer dbInitMutex.Unlock()
@@ -61,4 +59,19 @@ func GetLemmatizedDB() (*sql.DB, error) {
 		return nil, fmt.Errorf("lemmatized db file not found error %v", err)
 	}
 	return lemmatizedDB, nil
+}
+
+func GetStopListDB() (*sql.DB, error) {
+	dbInitMutex.Lock()
+	defer dbInitMutex.Unlock()
+
+	if stopListDB != nil {
+		return stopListDB, nil
+	}
+	var err error
+	stopListDB, err = sql.Open("sqlite3", "file:stoplistdb.sqlite?cache=shared")
+	if err != nil {
+		return nil, fmt.Errorf("stop list db file not found error %v", err)
+	}
+	return stopListDB, nil
 }
